@@ -2,36 +2,37 @@
 Treehouse Techdegree:
 FSJS Project 2 - Data Pagination and Filtering
 */
-   /**
-    * This function will create the element requested, and assigning the properties & its values
-    * @param {string} elementType - HTML element to be created
-    * @param {Object} propObj - element properties' key-value pairs
-    * @returns {*} HTML element
-    */
-   function createElement(elementType, propObj = {}) {
-      const element = document.createElement(elementType)
 
-      for (let i = 0; i < Object.keys(propObj).length; i++) {
-         const prop = Object.keys(propObj)[i]
-         const value = propObj[prop]
-         element[prop] = value
-      }
+/**
+ * This function will create the element requested, and assigning the properties & its values
+ * @param {string} elementType - HTML element to be created
+ * @param {Object} propObj - element properties' key-value pairs
+ * @returns {*} HTML element
+ */
+function createElement(elementType, propObj = {}) {
+   const element = document.createElement(elementType)
 
-      return element
+   for (let i = 0; i < Object.keys(propObj).length; i++) {
+      const prop = Object.keys(propObj)[i]
+      const value = propObj[prop]
+      element[prop] = value
    }
 
-   /**
-    * This function will create HTML element & append it to the parentNode specified
-    * @param {*} parentNode - newly created HTML element will be added to this parentNode
-    * @param {string} elementType - HTML element to be created
-    * @param {Object} propObj - element properties' key-value pairs
-    */
-   function appendTo(parentNode, elementType, propObj) {
-      const element = createElement(elementType, propObj)
-      parentNode.appendChild(element)
+   return element
+}
 
-      return element
-   }
+/**
+ * This function will create HTML element & append it to the parentNode specified
+ * @param {*} parentNode - newly created HTML element will be added to this parentNode
+ * @param {string} elementType - HTML element to be created
+ * @param {Object} propObj - element properties' key-value pairs
+ */
+function appendTo(parentNode, elementType, propObj) {
+   const element = createElement(elementType, propObj)
+   parentNode.appendChild(element)
+
+   return element
+}
 
 /**
  * This function will create and insert/append the elements needed to display a "page" of nine students
@@ -39,16 +40,16 @@ FSJS Project 2 - Data Pagination and Filtering
  * @param {number} page - Represents the page number that will be passed as an argument when the function is called
  */
 function showPage(list, page) {
-
-
-
-   // ----------- start here ---------------
    const itemsPerPage = 9
    const startIndex = (page * itemsPerPage) - itemsPerPage
-   const endIndex = (page * itemsPerPage) - 1
+   let endIndex = (page * itemsPerPage) - 1
 
    const ulStudentList = document.querySelector('.student-list')
    ulStudentList.innerHTML = '' // reset ul when loading
+
+   if (endIndex > (list.length - 1)) {
+      endIndex = list.length - 1
+   }
    
    // loop to render the student data
    for (let i = startIndex; i <= endIndex; i++) {
@@ -97,8 +98,8 @@ function addPagination(list) {
    for (let i = 1; i <= numOfBtns; i++) {
       const li = createElement('li')
          appendTo(li,'button',{
-            type :'button',
-            textContent :i
+            type: 'button',
+            textContent: i
          })
 
       ulLinkList.appendChild(li)
@@ -128,6 +129,66 @@ function addPagination(list) {
 }
 
 
-// Call functions
+function addSearchBar(list) {
+   const header = document.querySelector('header')
+   
+   // create search box
+   const searchLabel = appendTo(header, 'label', {
+      htmlFor: 'search',
+      className: 'student-search'
+   })
+      const searchBar = appendTo(searchLabel, 'input', {
+         id: 'search',
+         placeholder: 'Search by name...'
+      })
+      const searchButton = appendTo(searchLabel, 'button', {
+         type:'button'
+      })
+         appendTo(searchButton, 'img', {
+            src: 'img/icn-search.svg',
+            alt: 'Search icon'
+         })
+   
+   function performSearch() {
+      const searchTerm = searchBar.value
+      const searchResult = []
+
+      for (let i = 0; i < list.length; i++) {
+         let fullName = `${list[i].name.first} ${list[i].name.last}`.toLowerCase()
+
+         if (fullName.search(searchTerm) > -1) {
+            // if found
+            searchResult.push(list[i])
+         }
+      }
+      
+      if (searchResult.length > 0) {
+         // If there are search result, then produce the result page
+         showPage(searchResult,1)
+         addPagination(searchResult)
+      }
+      else {
+         // if no search result, then show "no result" message
+         const ulStudentList = document.querySelector('.student-list')
+         ulStudentList.innerHTML = '<h3>No Result Found...</h3>'
+
+         const ulLinkList = document.querySelector('.link-list')
+         ulLinkList.innerHTML = ''
+      }
+   }
+
+   searchButton.addEventListener('click', (event) => {
+      performSearch()
+   })
+
+   searchBar.addEventListener('keyup', (event) => {
+      performSearch()
+   })
+
+}
+
+
+// Produce the webpage
 showPage(data,1)
 addPagination(data)
+addSearchBar(data)
