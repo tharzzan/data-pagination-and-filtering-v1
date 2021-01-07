@@ -54,10 +54,10 @@ function showPage(list, page) {
    // loop to render the student data
    for (let i = startIndex; i <= endIndex; i++) {
       // 1. let's get all the details
-      let profilePicURL = list[i].picture.large
-      let fullName = `${list[i].name.first} ${list[i].name.last}`
-      let email = list[i].email
-      let joinDate = `Joined ${list[i].registered.date}`
+      const profilePicURL = list[i].picture.large
+      const fullName = `${list[i].name.first} ${list[i].name.last}`
+      const email = list[i].email
+      const joinDate = `Joined ${list[i].registered.date}`
 
       // 2. then create all the necessary HTML structure
       const li = appendTo(ulStudentList,'li',{
@@ -106,7 +106,7 @@ function addPagination(list) {
    }
 
    // select the first pagination button
-   let firstButton = ulLinkList.querySelector('button')
+   const firstButton = ulLinkList.querySelector('button')
    firstButton.className = 'active'
 
    ulLinkList.addEventListener('click', (event) => {
@@ -114,7 +114,7 @@ function addPagination(list) {
       const btnLis = ulLinkList.children
 
       for (let i = 0; i < numOfBtns; i++) {
-         let btn = btnLis[i].firstElementChild
+         const btn = btnLis[i].firstElementChild
 
          if (i === (selectedNum - 1)) {
             // if this is the clicked button
@@ -150,11 +150,11 @@ function addSearchBar(list) {
          })
    
    function performSearch() {
-      const searchTerm = searchBar.value
+      const searchTerm = searchBar.value.toLowerCase()
       const searchResult = []
 
       for (let i = 0; i < list.length; i++) {
-         let fullName = `${list[i].name.first} ${list[i].name.last}`.toLowerCase()
+         const fullName = `${list[i].name.first} ${list[i].name.last}`.toLowerCase()
 
          if (fullName.search(searchTerm) > -1) {
             // if found
